@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CINEVERSE - Login</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #080808, #1a1a1a, #050505);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .login-box {
+            width: 380px;
+            padding: 40px;
+            background: #141414;
+            border-radius: 18px;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.25);
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 38px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            color: #ff3333;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #aaa;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            border: 1px solid #444;
+            border-radius: 8px;
+            background: #111;
+            color: white;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #ff3333;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 18px;
+            border: none;
+            border-radius: 8px;
+            background: #e50914;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #ff1a1a;
+        }
+
+        .error {
+            background: #3a1111;
+            color: #ff7777;
+            padding: 10px;
+            border-radius: 7px;
+            margin-bottom: 15px;
+        }
+
+        .demo {
+            margin-top: 25px;
+            padding: 12px;
+            background: #111;
+            border-radius: 8px;
+            color: #aaa;
+            font-size: 13px;
+        }
+
+        .demo span {
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-box">
+
+        <div class="logo">CINEVERSE</div>
+
+        <div class="subtitle">
+            Your Movie Booking Experience 🎬
+        </div>
+
+        {% if error %}
+        <div class="error">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST">
+
+            <input
+                type="text"
+                name="username"
+                placeholder="Enter Username"
+                required
+            >
+
+            <input
+                type="password"
+                name="password"
+                placeholder="Enter Password"
+                required
+            >
+
+            <button type="submit">
+                LOGIN
+            </button>
+
+        </form>
+
+        <div class="demo">
+            Demo Login<br><br>
+            Username: <span>admin</span><br>
+            Password: <span>1234</span>
+        </div>
+
+    </div>
+
+</body>
+</html>

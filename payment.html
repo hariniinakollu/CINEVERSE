@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CINEVERSE - Payment</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #070707;
+            color: white;
+            min-height: 100vh;
+            animation: pageFade 0.7s ease;
+        }
+
+        @keyframes pageFade {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        nav {
+            height: 70px;
+            background: #111;
+            border-bottom: 1px solid #292929;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 55px;
+        }
+
+        .logo {
+            color: #e50914;
+            font-size: 30px;
+            font-weight: bold;
+            letter-spacing: 3px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 25px;
+        }
+
+        nav a:hover {
+            color: #e50914;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1050px;
+            margin: 40px auto;
+        }
+
+        .heading {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .heading h1 {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+        .heading p {
+            color: #888;
+        }
+
+        .payment-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .box {
+            background: #131313;
+            border: 1px solid #292929;
+            border-radius: 15px;
+            padding: 28px;
+        }
+
+        .box h2 {
+            margin-bottom: 25px;
+            font-size: 22px;
+        }
+
+        /* SUMMARY */
+
+        .movie-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e50914;
+            margin-bottom: 20px;
+        }
+
+        .detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 13px 0;
+            border-bottom: 1px solid #252525;
+            color: #aaa;
+            gap: 15px;
+        }
+
+        .detail strong {
+            color: white;
+            text-align: right;
+        }
+
+        .total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 1px solid #444;
+            font-size: 23px;
+            font-weight: bold;
+        }
+
+        .total span:last-child {
+            color: #e50914;
+        }
+
+        /* =========================
+           PAYMENT OPTIONS
+        ========================= */
+
+        .payment-option {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            min-height: 82px;
+            background: #0c0c0c;
+            border: 1px solid #333;
+            border-radius: 11px;
+            padding: 15px 18px;
+            margin-bottom: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-option:hover {
+            border-color: #e50914;
+            background: #171717;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(229, 9, 20, 0.12);
+        }
+
+        .payment-option:has(input:checked) {
+            border-color: #e50914;
+            background: #191010;
+            box-shadow: 0 0 0 1px #e50914;
+        }
+
+        .payment-option input {
+            width: 19px;
+            height: 19px;
+            flex-shrink: 0;
+            margin: 0 15px 0 0;
+            accent-color: #e50914;
+            cursor: pointer;
+        }
+
+        .payment-icon {
+            font-size: 27px;
+            width: 45px;
+            flex-shrink: 0;
+        }
+
+        .payment-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .payment-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .payment-small {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .pay-btn {
+            width: 100%;
+            padding: 16px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 9px;
+            background: #e50914;
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .pay-btn:hover {
+            background: #ff2029;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(229,9,20,.3);
+        }
+
+        .pay-btn:disabled {
+            background: #555;
+            cursor: wait;
+            transform: none;
+        }
+
+        .secure {
+            text-align: center;
+            color: #777;
+            font-size: 12px;
+            margin-top: 16px;
+        }
+
+        /* SUCCESS */
+
+        #successPage {
+            display: none;
+            text-align: center;
+            animation: successReveal 0.8s ease;
+        }
+
+        @keyframes successReveal {
+            from {
+                opacity: 0;
+                transform: scale(0.92) translateY(25px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background: #16a34a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            animation: pop 0.6s ease;
+        }
+
+        @keyframes pop {
+            0% {
+                transform: scale(0);
+            }
+
+            70% {
+                transform: scale(1.15);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .success-title {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .success-text {
+            color: #999;
+            margin-bottom: 30px;
+        }
+
+        /* TICKET */
+
+        .ticket {
+            max-width: 760px;
+            margin: auto;
+            background: white;
+            color: #111;
+            border-radius: 15px;
+            overflow: hidden;
+            text-align: left;
+            box-shadow: 0 20px 60px rgba(0,0,0,.5);
+        }
+
+        .ticket-top {
+            background: #e50914;
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ticket-logo {
+            font-size: 27px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .confirmed {
+            font-size: 13px;
+            background: rgba(255,255,255,.18);
+            padding: 8px 12px;
+            border-radius: 20px;
+        }
+
+        .ticket-body {
+            padding: 28px;
+        }
+
+        .ticket-movie {
+            font-size: 27px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .booking-id {
+            color: #777;
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+
+        .ticket-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .ticket-detail label {
+            display: block;
+            color: #888;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .ticket-detail strong {
+            font-size: 16px;
+        }
+
+        .ticket-line {
+            border-top: 2px dashed #ccc;
+            margin: 25px 0;
+        }
+
+        .ticket-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .amount {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .qr {
+            width: 105px;
+            height: 105px;
+            background:
+                linear-gradient(90deg,#111 10px,transparent 10px) 0 0/20px 20px,
+                linear-gradient(#111 10px,transparent 10px) 0 0/20px 20px,
+                white;
+            border: 7px solid white;
+            outline: 2px solid #222;
+        }
+
+        .ticket-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 25px;
+        }
+
+        .ticket-buttons button {
+            padding: 13px 25px;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .print-btn {
+            background: #e50914;
+            color: white;
+        }
+
+        .home-btn {
+            background: #222;
+            color: white;
+        }
+
+        .note {
+            text-align: center;
+            color: #777;
+            font-size: 12px;
+            margin-top: 18px;
+        }
+
+        @media(max-width: 750px) {
+
+            .payment-layout {
+                grid-template-columns: 1fr;
+            }
+
+            nav {
+                padding: 0 20px;
+            }
+
+            .ticket-details {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media print {
+
+            body {
+                background: white;
+            }
+
+            nav,
+            .heading,
+            .ticket-buttons,
+            .note {
+                display: none !important;
+            }
+
+            .container {
+                width: 100%;
+                margin: 0;
+            }
+
+            #successPage {
+                display: block !important;
+            }
+
+            .ticket {
+                box-shadow: none;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+
+    <div class="logo">
+        CINEVERSE
+    </div>
+
+    <div>
+        <a href="/">Home</a>
+        <a href="/logout">Logout</a>
+    </div>
+
+</nav>
+
+
+<div class="container">
+
+    <div class="heading">
+
+        <h1>💳 Complete Payment</h1>
+
+        <p>
+            Your booking is almost ready.
+        </p>
+
+    </div>
+
+
+    <!-- PAYMENT PAGE -->
+
+    <div id="paymentPage">
+
+        <div class="payment-layout">
+
+
+            <!-- BOOKING SUMMARY -->
+
+            <div class="box">
+
+                <h2>🎬 Booking Summary</h2>
+
+                <div class="movie-title" id="movie"></div>
+
+                <div class="detail">
+                    <span>Customer</span>
+                    <strong id="name"></strong>
+                </div>
+
+                <div class="detail">
+                    <span>Theatre</span>
+                    <strong id="theatre"></strong>
+                </div>
+
+                <div class="detail">
+                    <span>Date</span>
+                    <strong id="date"></strong>
+                </div>
+
+                <div class="detail">
+                    <span>Show Time</span>
+                    <strong id="time"></strong>
+                </div>
+
+                <div class="detail">
+                    <span>Seats</span>
+                    <strong id="seats"></strong>
+                </div>
+
+                <div class="detail">
+                    <span>Food</span>
+                    <strong id="food"></strong>
+                </div>
+
+                <div class="total">
+                    <span>Total</span>
+                    <span id="total"></span>
+                </div>
+
+            </div>
+
+
+            <!-- PAYMENT OPTIONS -->
+
+            <div class="box">
+
+                <h2>🔐 Select Payment Method</h2>
+
+
+                <label class="payment-option">
+
+                    <input
+                        type="radio"
+                        name="payment"
+                        value="UPI"
+                        checked
+                    >
+
+                    <div class="payment-icon">
+                        📱
+                    </div>
+
+                    <div class="payment-info">
+
+                        <div class="payment-title">
+                            UPI
+                        </div>
+
+                        <div class="payment-small">
+                            Google Pay • PhonePe • Paytm
+                        </div>
+
+                    </div>
+
+                </label>
+
+
+                <label class="payment-option">
+
+                    <input
+                        type="radio"
+                        name="payment"
+                        value="Card"
+                    >
+
+                    <div class="payment-icon">
+                        💳
+                    </div>
+
+                    <div class="payment-info">
+
+                        <div class="payment-title">
+                            Credit / Debit Card
+                        </div>
+
+                        <div class="payment-small">
+                            Visa • Mastercard • RuPay
+                        </div>
+
+                    </div>
+
+                </label>
+
+
+                <label class="payment-option">
+
+                    <input
+                        type="radio"
+                        name="payment"
+                        value="Net Banking"
+                    >
+
+                    <div class="payment-icon">
+                        🏦
+                    </div>
+
+                    <div class="payment-info">
+
+                        <div class="payment-title">
+                            Net Banking
+                        </div>
+
+                        <div class="payment-small">
+                            All major banks supported
+                        </div>
+
+                    </div>
+
+                </label>
+
+
+                <button
+                    class="pay-btn"
+                    onclick="makePayment()"
+                >
+                    🔒 PAY NOW
+                </button>
+
+
+                <div class="secure">
+                    🔒 Secure Demo Payment • No real money charged
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SUCCESS PAGE -->
+
+    <div id="successPage">
+
+        <div class="success-icon">
+            ✓
+        </div>
+
+        <h1 class="success-title">
+            Booking Confirmed!
+        </h1>
+
+        <p class="success-text">
+            Your movie tickets have been successfully booked 🎉
+        </p>
+
+
+        <!-- DIGITAL TICKET -->
+
+        <div class="ticket">
+
+            <div class="ticket-top">
+
+                <div class="ticket-logo">
+                    CINEVERSE
+                </div>
+
+                <div class="confirmed">
+                    ✓ BOOKING CONFIRMED
+                </div>
+
+            </div>
+
+
+            <div class="ticket-body">
+
+                <div
+                    class="ticket-movie"
+                    id="ticketMovie"
+                ></div>
+
+                <div class="booking-id">
+                    Booking ID:
+                    <strong id="bookingId"></strong>
+                </div>
+
+
+                <div class="ticket-details">
+
+                    <div class="ticket-detail">
+                        <label>Customer</label>
+                        <strong id="ticketName"></strong>
+                    </div>
+
+                    <div class="ticket-detail">
+                        <label>Theatre</label>
+                        <strong id="ticketTheatre"></strong>
+                    </div>
+
+                    <div class="ticket-detail">
+                        <label>Date</label>
+                        <strong id="ticketDate"></strong>
+                    </div>
+
+                    <div class="ticket-detail">
+                        <label>Show Time</label>
+                        <strong id="ticketTime"></strong>
+                    </div>
+
+                    <div class="ticket-detail">
+                        <label>Seats</label>
+                        <strong id="ticketSeats"></strong>
+                    </div>
+
+                    <div class="ticket-detail">
+                        <label>Food</label>
+                        <strong id="ticketFood"></strong>
+                    </div>
+
+                </div>
+
+
+                <div class="ticket-line"></div>
+
+
+                <div class="ticket-bottom">
+
+                    <div>
+
+                        <div style="color:#888;font-size:12px;">
+                            TOTAL AMOUNT
+                        </div>
+
+                        <div
+                            class="amount"
+                            id="ticketTotal"
+                        ></div>
+
+                    </div>
+
+                    <div class="qr"></div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="ticket-buttons">
+
+            <button
+                class="print-btn"
+                onclick="window.print()"
+            >
+                🖨️ PRINT TICKET
+            </button>
+
+            <button
+                class="home-btn"
+                onclick="goHome()"
+            >
+                🏠 HOME
+            </button>
+
+        </div>
+
+
+        <p class="note">
+            Please show this digital ticket at the theatre entrance.
+        </p>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* GET SAVED DATA */
+
+function getData(key) {
+    return localStorage.getItem(key) || "-";
+}
+
+
+/* LOAD BOOKING DETAILS */
+
+document.getElementById("name").innerText =
+    getData("cineverseName");
+
+document.getElementById("movie").innerText =
+    getData("cineverseMovie");
+
+document.getElementById("theatre").innerText =
+    getData("cineverseTheatre");
+
+document.getElementById("date").innerText =
+    getData("cineverseDate");
+
+document.getElementById("time").innerText =
+    getData("cineverseTime");
+
+document.getElementById("seats").innerText =
+    getData("cineverseSeats");
+
+document.getElementById("food").innerText =
+    getData("cineverseFood");
+
+document.getElementById("total").innerText =
+    "₹" + getData("cineverseTotal");
+
+
+/* PAYMENT */
+
+function makePayment() {
+
+    let button =
+        document.querySelector(".pay-btn");
+
+    button.innerText =
+        "⏳ Processing Payment...";
+
+    button.disabled = true;
+
+
+    setTimeout(function() {
+
+        showTicket();
+
+    }, 1800);
+}
+
+
+/* SHOW FINAL TICKET */
+
+function showTicket() {
+
+    document.getElementById("paymentPage")
+        .style.display = "none";
+
+    document.querySelector(".heading")
+        .style.display = "none";
+
+    document.getElementById("successPage")
+        .style.display = "block";
+
+
+    document.getElementById("ticketMovie").innerText =
+        getData("cineverseMovie");
+
+    document.getElementById("ticketName").innerText =
+        getData("cineverseName");
+
+    document.getElementById("ticketTheatre").innerText =
+        getData("cineverseTheatre");
+
+    document.getElementById("ticketDate").innerText =
+        getData("cineverseDate");
+
+    document.getElementById("ticketTime").innerText =
+        getData("cineverseTime");
+
+    document.getElementById("ticketSeats").innerText =
+        getData("cineverseSeats");
+
+    document.getElementById("ticketFood").innerText =
+        getData("cineverseFood");
+
+    document.getElementById("ticketTotal").innerText =
+        "₹" + getData("cineverseTotal");
+
+
+    /* UNIQUE BOOKING ID */
+
+    let bookingID =
+        "CV-" +
+        Math.floor(
+            100000 +
+            Math.random() * 900000
+        );
+
+    document.getElementById("bookingId").innerText =
+        bookingID;
+
+    localStorage.setItem(
+        "cineverseBookingID",
+        bookingID
+    );
+}
+
+
+/* HOME */
+
+function goHome() {
+
+    window.location.href = "/";
+
+}
+
+</script>
+
+</body>
+</html>

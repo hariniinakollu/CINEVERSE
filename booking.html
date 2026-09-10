@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CINEVERSE - Book Tickets</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #080808;
+            color: white;
+        }
+
+        nav {
+            height: 70px;
+            background: #111;
+            border-bottom: 1px solid #292929;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 50px;
+        }
+
+        .logo {
+            color: #e50914;
+            font-size: 30px;
+            font-weight: bold;
+            letter-spacing: 3px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 25px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 35px auto;
+            padding: 0 25px;
+        }
+
+        h1 {
+            font-size: 34px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #999;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background: #131313;
+            border: 1px solid #292929;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 22px;
+        }
+
+        .section h2 {
+            font-size: 21px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #bbb;
+            margin-bottom: 7px;
+            margin-top: 15px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 13px;
+            background: #0b0b0b;
+            color: white;
+            border: 1px solid #444;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #e50914;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        /* SEATS */
+
+        .screen {
+            width: 70%;
+            margin: 10px auto 30px;
+            padding: 10px;
+            text-align: center;
+            background: #ddd;
+            color: #111;
+            border-radius: 50% 50% 5px 5px;
+            font-weight: bold;
+            box-shadow: 0 5px 25px rgba(255,255,255,.2);
+        }
+
+        .seat-area {
+            max-width: 500px;
+            margin: auto;
+        }
+
+        .seat-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .seat {
+            width: 45px;
+            height: 40px;
+            background: #222;
+            border: 1px solid #555;
+            border-radius: 7px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .seat:hover {
+            border-color: #e50914;
+        }
+
+        .seat.selected {
+            background: #e50914;
+            border-color: #ff4444;
+        }
+
+        .seat.booked {
+            background: #555;
+            color: #888;
+            cursor: not-allowed;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 25px;
+            color: #aaa;
+            font-size: 13px;
+        }
+
+        .legend span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .available {
+            background: #222;
+            border: 1px solid #555;
+        }
+
+        .selected-dot {
+            background: #e50914;
+        }
+
+        .booked-dot {
+            background: #555;
+        }
+
+        /* FOOD */
+
+        .food-options {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .food-option {
+            background: #0c0c0c;
+            border: 1px solid #333;
+            padding: 18px 10px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .food-option:hover {
+            border-color: #e50914;
+        }
+
+        .food-option input {
+            width: auto;
+            margin-right: 5px;
+        }
+
+        /* SUMMARY */
+
+        .summary {
+            background: #191919;
+            border: 1px solid #333;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 9px 0;
+            color: #bbb;
+        }
+
+        .summary-row.total {
+            border-top: 1px solid #444;
+            margin-top: 10px;
+            padding-top: 18px;
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .continue-btn {
+            width: 100%;
+            padding: 16px;
+            background: #e50914;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .continue-btn:hover {
+            background: #ff2029;
+        }
+
+        @media(max-width: 700px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .food-options {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            nav {
+                padding: 0 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <div class="logo">CINEVERSE</div>
+
+    <div>
+        <a href="/">Home</a>
+        <a href="/logout">Logout</a>
+    </div>
+</nav>
+
+
+<div class="container">
+
+    <h1>🎟️ Book Your Tickets</h1>
+    <p class="subtitle">
+        Select your movie, seats and food to complete your booking.
+    </p>
+
+
+    <!-- CUSTOMER + MOVIE -->
+
+    <div class="section">
+
+        <h2>👤 Customer & Movie Details</h2>
+
+        <div class="grid">
+
+            <div>
+                <label>Customer Name</label>
+                <input id="name" type="text" placeholder="Enter your name">
+            </div>
+
+            <div>
+                <label>Phone Number</label>
+                <input id="phone" type="tel" placeholder="Enter phone number">
+            </div>
+
+            <div>
+                <label>🎬 Select Movie</label>
+
+                <select id="movie">
+                    <option value="">Select Movie</option>
+                    <option>Kalki 2898 AD</option>
+                    <option>They Call Him OG</option>
+                    <option>Mirai</option>
+                </select>
+
+            </div>
+
+            <div>
+                <label>🏢 Select Theatre</label>
+
+                <select id="theatre">
+                    <option value="">Select Theatre</option>
+                    <option>PVR Cinemas</option>
+                    <option>INOX</option>
+                    <option>Cinepolis</option>
+                    <option>AMB Cinemas</option>
+                </select>
+
+            </div>
+
+            <div>
+                <label>📅 Select Date</label>
+                <input id="date" type="date">
+            </div>
+
+            <div>
+                <label>🕐 Show Time</label>
+
+                <select id="time">
+                    <option value="">Select Show Time</option>
+                    <option>10:00 AM</option>
+                    <option>1:30 PM</option>
+                    <option>4:30 PM</option>
+                    <option>7:30 PM</option>
+                    <option>10:30 PM</option>
+                </select>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SEAT SELECTION -->
+
+    <div class="section">
+
+        <h2>💺 Select Your Seats</h2>
+
+        <div class="screen">
+            SCREEN
+        </div>
+
+        <div class="seat-area">
+
+            <div class="seat-row">
+                <div class="seat" onclick="selectSeat(this,'A1')">A1</div>
+                <div class="seat" onclick="selectSeat(this,'A2')">A2</div>
+                <div class="seat" onclick="selectSeat(this,'A3')">A3</div>
+                <div class="seat booked">A4</div>
+                <div class="seat" onclick="selectSeat(this,'A5')">A5</div>
+                <div class="seat" onclick="selectSeat(this,'A6')">A6</div>
+            </div>
+
+            <div class="seat-row">
+                <div class="seat" onclick="selectSeat(this,'B1')">B1</div>
+                <div class="seat" onclick="selectSeat(this,'B2')">B2</div>
+                <div class="seat booked">B3</div>
+                <div class="seat" onclick="selectSeat(this,'B4')">B4</div>
+                <div class="seat" onclick="selectSeat(this,'B5')">B5</div>
+                <div class="seat" onclick="selectSeat(this,'B6')">B6</div>
+            </div>
+
+            <div class="seat-row">
+                <div class="seat" onclick="selectSeat(this,'C1')">C1</div>
+                <div class="seat" onclick="selectSeat(this,'C2')">C2</div>
+                <div class="seat" onclick="selectSeat(this,'C3')">C3</div>
+                <div class="seat" onclick="selectSeat(this,'C4')">C4</div>
+                <div class="seat booked">C5</div>
+                <div class="seat" onclick="selectSeat(this,'C6')">C6</div>
+            </div>
+
+        </div>
+
+        <div class="legend">
+            <span><i class="dot available"></i> Available</span>
+            <span><i class="dot selected-dot"></i> Selected</span>
+            <span><i class="dot booked-dot"></i> Booked</span>
+        </div>
+
+    </div>
+
+
+    <!-- FOOD -->
+
+    <div class="section">
+
+        <h2>🍿 Add Food</h2>
+
+        <div class="food-options">
+
+            <label class="food-option">
+                <input type="radio" name="food" value="No Food" data-price="0" checked>
+                No Food
+                <br>
+                ₹0
+            </label>
+
+            <label class="food-option">
+                <input type="radio" name="food" value="Popcorn" data-price="150">
+                🍿 Popcorn
+                <br>
+                ₹150
+            </label>
+
+            <label class="food-option">
+                <input type="radio" name="food" value="Popcorn + Coke" data-price="200">
+                🍿🥤 Popcorn + Coke
+                <br>
+                ₹200
+            </label>
+
+            <label class="food-option">
+                <input type="radio" name="food" value="Combo Meal" data-price="250">
+                🍔 Combo Meal
+                <br>
+                ₹250
+            </label>
+
+        </div>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="section summary">
+
+        <h2>🧾 Booking Summary</h2>
+
+        <div class="summary-row">
+            <span>Tickets</span>
+            <span id="ticketCount">0</span>
+        </div>
+
+        <div class="summary-row">
+            <span>Ticket Price</span>
+            <span id="ticketPrice">₹0</span>
+        </div>
+
+        <div class="summary-row">
+            <span>Food</span>
+            <span id="foodPrice">₹0</span>
+        </div>
+
+        <div class="summary-row total">
+            <span>Total Amount</span>
+            <span id="total">₹0</span>
+        </div>
+
+        <button class="continue-btn" onclick="continuePayment()">
+            💳 CONTINUE TO PAYMENT
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let selectedSeats = [];
+
+const ticketPrice = 200;
+
+
+function selectSeat(element, seatNumber) {
+
+    if (element.classList.contains("booked")) {
+        return;
+    }
+
+    if (element.classList.contains("selected")) {
+
+        element.classList.remove("selected");
+
+        selectedSeats = selectedSeats.filter(
+            seat => seat !== seatNumber
+        );
+
+    } else {
+
+        element.classList.add("selected");
+
+        selectedSeats.push(seatNumber);
+    }
+
+    updateTotal();
+}
+
+
+function updateTotal() {
+
+    let food =
+        document.querySelector(
+            'input[name="food"]:checked'
+        );
+
+    let foodPrice =
+        parseInt(food.dataset.price);
+
+    let ticketsTotal =
+        selectedSeats.length * ticketPrice;
+
+    let total =
+        ticketsTotal + foodPrice;
+
+    document.getElementById("ticketCount").innerText =
+        selectedSeats.length;
+
+    document.getElementById("ticketPrice").innerText =
+        "₹" + ticketsTotal;
+
+    document.getElementById("foodPrice").innerText =
+        "₹" + foodPrice;
+
+    document.getElementById("total").innerText =
+        "₹" + total;
+}
+
+
+document.querySelectorAll(
+    'input[name="food"]'
+).forEach(function(food) {
+
+    food.addEventListener(
+        "change",
+        updateTotal
+    );
+
+});
+
+
+function continuePayment() {
+
+    let name =
+        document.getElementById("name").value;
+
+    let phone =
+        document.getElementById("phone").value;
+
+    let movie =
+        document.getElementById("movie").value;
+
+    let theatre =
+        document.getElementById("theatre").value;
+
+    let date =
+        document.getElementById("date").value;
+
+    let time =
+        document.getElementById("time").value;
+
+    let food =
+        document.querySelector(
+            'input[name="food"]:checked'
+        ).value;
+
+    let foodPrice =
+        parseInt(
+            document.querySelector(
+                'input[name="food"]:checked'
+            ).dataset.price
+        );
+
+    if (
+        name === "" ||
+        phone === "" ||
+        movie === "" ||
+        theatre === "" ||
+        date === "" ||
+        time === ""
+    ) {
+
+        alert("Please fill all booking details!");
+
+        return;
+    }
+
+
+    if (selectedSeats.length === 0) {
+
+        alert("Please select at least one seat!");
+
+        return;
+    }
+
+
+    let total =
+        selectedSeats.length * ticketPrice
+        + foodPrice;
+
+
+    localStorage.setItem(
+        "cineverseName",
+        name
+    );
+
+    localStorage.setItem(
+        "cineversePhone",
+        phone
+    );
+
+    localStorage.setItem(
+        "cineverseMovie",
+        movie
+    );
+
+    localStorage.setItem(
+        "cineverseTheatre",
+        theatre
+    );
+
+    localStorage.setItem(
+        "cineverseDate",
+        date
+    );
+
+    localStorage.setItem(
+        "cineverseTime",
+        time
+    );
+
+    localStorage.setItem(
+        "cineverseSeats",
+        selectedSeats.join(", ")
+    );
+
+    localStorage.setItem(
+        "cineverseFood",
+        food
+    );
+
+    localStorage.setItem(
+        "cineverseTotal",
+        total
+    );
+
+
+    window.location.href =
+        "/payment";
+}
+
+</script>
+
+</body>
+</html>
