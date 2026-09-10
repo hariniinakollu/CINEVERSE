@@ -1,8 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder=".")
 app.secret_key = "cineverse_secret_key"
-
 
 # LOGIN PAGE
 @app.route("/login", methods=["GET", "POST"])
@@ -15,7 +14,10 @@ def login():
             session["logged_in"] = True
             return redirect(url_for("home"))
         else:
-            return render_template("login.html", error="Invalid username or password!")
+            return render_template(
+                "login.html",
+                error="Invalid username or password!"
+            )
 
     return render_template("login.html")
 
